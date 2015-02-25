@@ -1,0 +1,67 @@
+require 'grimoire'
+
+module Grimoire
+  # Contains all available Units
+  class System
+
+    # @return [Smash]
+    attr_reader :units
+
+    # Create new system
+    #
+    # @return [self]
+    def initialize(*_)
+      @units = Smash.new
+    end
+
+    # Register new unit
+    #
+    # @param unit [Unit]
+    # @return [self]
+    def add_unit(*unit)
+      [unit].flatten.compact.each do |u|
+        unless(units[u.name])
+          units[u.name] = []
+        end
+        units[u.name].push(u) unless units[u.name].include?(u)
+      end
+      self
+    end
+
+    # Remove registered unit
+    #
+    # @param unit [Unit]
+    # @param deps
+    # @return [self]
+    def remove_unit(unit)
+      if(units[unit.name])
+        units[unit.name].delete(unit)
+      end
+      self
+    end
+
+    # Provide all available units that satisfy the constraint
+    #
+    # @param unit_name [String]
+    # @param constraint [REQUIREMENT_CLASS]
+    # @return [Array<Unit>]
+    def subset(unit_name, constraint)
+      units[unit_name].find_all do |unit|
+        constraint.satisfied_by?(unit.version)
+      end
+    end
+
+    # Removes any duplicate units registered
+    # and sorts all unit lists
+    #
+    # @return [self]
+    def scrub!
+      units.values.map do |items|
+        items.sort!{|x,y| y.version <=> x.version}
+        items.uniq!
+      end
+      self
+    end
+
+  end
+end
