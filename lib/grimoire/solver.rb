@@ -11,6 +11,7 @@ module Grimoire
 
     attribute :requirements, RequirementList, :required => true
     attribute :system, System, :required => true
+    attribute :score_keeper, UnitScoreKeeper
 
     # @return [System] subset of full system based on requirements
     attr_reader :world
@@ -60,9 +61,11 @@ module Grimoire
     # @param units [Array<Unit>]
     # @return [Bogo::PriorityQueue]
     def populate_queue(p_queue, units)
-      units.each_with_index do |unit, index|
-        p_queue.push(unit, score_unit(unit, index))
+      i = 0
+      units = units.map do |unit|
+        [unit, score_unit(unit, i += 1)]
       end
+      p_queue.multi_push(units)
       p_queue
     end
 
@@ -70,9 +73,13 @@ module Grimoire
     #
     # @param unit [Unit]
     # @param score [Integer] current score
-    # @return [Integer] score
+    # @return [Numeric] score
     def score_unit(unit, score)
-      score
+      if(score_keeper)
+        score_keeper.score_for(unit) || score
+      else
+        score
+      end
     end
 
     # Repopulate the given queue
