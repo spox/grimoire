@@ -17,6 +17,7 @@ module Grimoire
   autoload :Solver, 'grimoire/solver'
   autoload :System, 'grimoire/system'
   autoload :Unit, 'grimoire/unit'
+  autoload :UnitScoreKeeper, 'grimoire/unit_score_keeper'
   autoload :Utility, 'grimoire/utility'
 
 end
