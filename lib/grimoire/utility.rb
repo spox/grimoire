@@ -16,6 +16,10 @@ module Grimoire
       load_data(args)
     end
 
+    # @return [String] JSON serialized
+    def to_json(*args)
+      MultiJson.dump(data, *args)
+    end
   end
 
 end
