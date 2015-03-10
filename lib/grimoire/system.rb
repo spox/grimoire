@@ -63,5 +63,13 @@ module Grimoire
       self
     end
 
+    # @return [String]
+    def to_json(*args)
+      MultiJson.dump(
+        Smash.new(:units => units),
+        *args
+      )
+    end
+
   end
 end
