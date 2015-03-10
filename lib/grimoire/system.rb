@@ -19,6 +19,9 @@ module Grimoire
     # @param unit [Unit]
     # @return [self]
     def add_unit(*unit)
+      if(bad_u = unit.detect{|u| !u.is_a?(Unit)})
+        raise TypeError.new "Expecting `Unit` instance but received `#{bad_u.class}`"
+      end
       [unit].flatten.compact.each do |u|
         unless(units[u.name])
           units[u.name] = []
@@ -34,8 +37,14 @@ module Grimoire
     # @param deps
     # @return [self]
     def remove_unit(unit)
+      unless(unit.is_a?(Unit))
+        raise TypeError.new "Expecting `Unit` instance but received `#{unit.class}`"
+      end
       if(units[unit.name])
         units[unit.name].delete(unit)
+        if(units[unit.name].empty?)
+          units.delete(unit.name)
+        end
       end
       self
     end
@@ -46,6 +55,9 @@ module Grimoire
     # @param constraint [REQUIREMENT_CLASS]
     # @return [Array<Unit>]
     def subset(unit_name, constraint)
+      unless(constraint.is_a?(REQUIREMENT_CLASS))
+        raise TypeError.new "Expecting `#{REQUIREMENT_CLASS}` but received `#{constraint.class}`"
+      end
       units[unit_name].find_all do |unit|
         constraint.satisfied_by?(unit.version)
       end
