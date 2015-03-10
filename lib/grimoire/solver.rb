@@ -1,3 +1,4 @@
+require 'digest/sha2'
 require 'grimoire'
 
 module Grimoire
@@ -19,7 +20,9 @@ module Grimoire
     def initialize(*_)
       super
       @world = System.new
+      @log = []
       build_world(requirements.requirements, world, system)
+      @log.clear
       world.scrub!
     end
 
@@ -35,6 +38,9 @@ module Grimoire
       root = system unless root
       deps.each do |dep|
         units = root.subset(dep.name, dep.requirement)
+        sha = Digest::SHA256.hexdigest(MultiJson.dump(units))
+        next if @log.include?(sha)
+        @log.push(sha)
         units.each do |unit|
           build_world(unit.dependencies, my_world, root)
         end
@@ -118,8 +124,9 @@ module Grimoire
     #
     # @param dep [DEPENDENCY_CLASS]
     # @param given [DEPENDENCY_CLASS]
+    # @param current [Array<Unit>] current units within path
     # @return [Array<Unit>]
-    def resolve(dep, given=nil)
+    def resolve(dep, given=nil, current=[])
       unit = given || unit_for(dep)
       if(unit.dependencies.empty?)
         [unit]
@@ -127,7 +134,7 @@ module Grimoire
         deps = [unit]
         begin
           unit.dependencies.map do |u_dep|
-            existing = deps.detect{|d| d.name == u_dep.name}
+            existing = (current + deps).detect{|d| d.name == u_dep.name}
             if(existing)
               if(u_dep.requirement.satisfied_by?(existing.version))
                 next
@@ -138,7 +145,7 @@ module Grimoire
             else
               reset_queue(u_dep.name) unless given
             end
-            deps += resolve(u_dep)
+            deps += resolve(u_dep, nil, current + deps)
             deps.compact!
             u_dep
           end.compact.map do |u_dep|  # validator
