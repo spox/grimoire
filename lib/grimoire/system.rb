@@ -55,7 +55,7 @@ module Grimoire
     # @param constraint [REQUIREMENT_CLASS]
     # @return [Array<Unit>]
     def subset(unit_name, constraint)
-      unless(constraint.is_a?(REQUIREMENT_CLASS))
+      unless(constraint.respond_to?(:requirements))
         raise TypeError.new "Expecting `#{REQUIREMENT_CLASS}` but received `#{constraint.class}`"
       end
       units[unit_name].find_all do |unit|
