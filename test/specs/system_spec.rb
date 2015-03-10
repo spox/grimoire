@@ -23,6 +23,16 @@ describe Grimoire::System do
     system.units.values.first.first.name.must_equal 't'
   end
 
+  it 'should allow multiple units to be added' do
+    system.add_unit(
+      Grimoire::Unit.new(:name => 't', :version => '0.0.1'),
+      Grimoire::Unit.new(:name => 't', :version => '0.1.1'),
+      Grimoire::Unit.new(:name => 't', :version => '0.2.1'),
+      Grimoire::Unit.new(:name => 't', :version => '0.3.1')
+    )
+    system.units['t'].size.must_equal 4
+  end
+
   it 'should allow units to be removed' do
     unit = Grimoire::Unit.new(:name => 't', :version => '0.0.1')
     system.add_unit(unit)
