@@ -154,7 +154,7 @@ module Grimoire
         rescue Error::ResolutionPathInvalid
           retry
         end
-        deps
+        deps.uniq
       end
     end
 
