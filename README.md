@@ -52,7 +52,7 @@ solver = Grimoire::Solver.new(
 
 * Generate solutions
 
-``ruby
+```ruby
 solutions = solver.generate!
 p solutions.pop
 ```
