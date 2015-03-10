@@ -11,6 +11,7 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.license = 'Apache 2.0'
   s.add_runtime_dependency 'bogo', '~> 0.1.10'
+  s.add_runtime_dependency 'attribute_struct', '>= 0.1.12'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'pry'
   s.files = Dir['{lib}/**/**/*'] + %w(grimoire.gemspec README.md CHANGELOG.md CONTRIBUTING.md LICENSE)
