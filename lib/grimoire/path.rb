@@ -6,8 +6,9 @@ module Grimoire
 
     attribute :units, Unit, :multiple => true, :default => []
 
+    # @return [Array<DEPENDENCY_CLASS>]
     def dependencies
-      units.map(&:dependencies).flatten.uniq!
+      units.map(&:dependencies).flatten.uniq
     end
 
   end
