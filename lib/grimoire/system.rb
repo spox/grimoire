@@ -19,7 +19,7 @@ module Grimoire
     # @param unit [Unit]
     # @return [self]
     def add_unit(*unit)
-      if(bad_u = unit.detect{|u| !u.is_a?(Unit)})
+      if(bad_u = unit.flatten.detect{|u| !u.is_a?(Unit)})
         raise TypeError.new "Expecting `Unit` instance but received `#{bad_u.class}`"
       end
       [unit].flatten.compact.each do |u|
