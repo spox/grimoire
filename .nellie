@@ -1,0 +1,8 @@
+{
+  "commands": [
+    "env",
+    "/opt/chef/embedded/bin/gem install bundler --no-ri --no-rdoc",
+    "/opt/chef/embedded/bin/bundle install --path vendor",
+    "/opt/chef/embedded/bin/bundle exec ruby test/run.rb"
+  ]
+}
