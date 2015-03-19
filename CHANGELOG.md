@@ -1,3 +1,8 @@
+# v0.1.6
+* Add debug output if UI is available for output
+* Update exception errors to provide more detail/context
+* Provide better type checking prior to processing
+
 # v0.1.4
 * Provide simple system serialization support
 * Fix dependency listing from units within path
