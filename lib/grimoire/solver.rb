@@ -13,6 +13,7 @@ module Grimoire
     attribute :requirements, RequirementList, :required => true
     attribute :system, System, :required => true
     attribute :score_keeper, UnitScoreKeeper
+    attribute :result_limit, Integer, :required => true, :default => 1
 
     # @return [System] subset of full system based on requirements
     attr_reader :world
@@ -191,24 +192,19 @@ module Grimoire
       debug{ "Solver world context of unit system: #{world.inspect}" }
       results = Bogo::PriorityQueue.new
       begin
-        until(count > MAX_GENERATION_LOOPS)
+        until(count >= result_limit)
           result = resolve(nil, custom_unit)
           results.push(Path.new(:units => result.slice(1, result.size)), count)
           count += 1
-          break # NOTE: right now we just want the best solution
         end
       rescue Error::UnitUnavailable => e
         debug "Failed to unit: #{e}"
         count = nil
       end
-      unless(count.nil?)
-        raise Error::MaximumGenerationLoopsExceeded.new("Exceeded maximum allowed loops for path generation: #{MAX_GENERATION_LOOPS}")
+      if(results.empty?)
+        raise Error::NoSolution.new("Failed to generate valid path for requirements: `#{custom_unit.dependencies}`")
       else
-        if(results.empty?)
-          raise Error::NoSolution.new("Failed to generate valid path for requirements: `#{custom_unit.dependencies}`")
-        else
-          results
-        end
+        results
       end
     end
 
