@@ -20,6 +20,12 @@ module Grimoire
     def to_json(*args)
       MultiJson.dump(data, *args)
     end
+
+    # Write debug message
+    def debug(*args, &block)
+      Grimoire.debug(*args, &block)
+    end
+
   end
 
 end
