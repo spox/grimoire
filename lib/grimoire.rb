@@ -20,6 +20,34 @@ module Grimoire
   autoload :UnitScoreKeeper, 'grimoire/unit_score_keeper'
   autoload :Utility, 'grimoire/utility'
 
+  class << self
+
+    # @return [Bogo::Ui]
+    attr_reader :ui
+
+    # Set Ui instance
+    #
+    # @param ui [Bogo::Ui]
+    # @return [Bogo::Ui]
+    def ui=(ui)
+      unless(ui.respond_to?(:debug))
+        raise TypeError.new "Expecting type `Bogo::Ui` but received `#{ui.class}`"
+      end
+      @ui = ui
+    end
+
+
+    # Write debug message
+    def debug(*args)
+      if(ui)
+        if(block_given?)
+          args.push(yield)
+        end
+        ui.debug(*args)
+      end
+    end
+  end
+
 end
 
 require 'grimoire/version'
