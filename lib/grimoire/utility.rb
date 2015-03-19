@@ -18,7 +18,7 @@ module Grimoire
 
     # @return [String] JSON serialized
     def to_json(*args)
-      MultiJson.dump(data, *args)
+      data.to_json(*args)
     end
 
     # Write debug message
