@@ -39,11 +39,16 @@ module Grimoire
       deps.each do |dep|
         units = root.subset(dep.name, dep.requirement)
         sha = Digest::SHA256.hexdigest(MultiJson.dump(units))
-        next if @log.include?(sha)
+        if(@log.include?(sha))
+          debug "Units checksum already added to world. Skipping. (`#{sha}`)"
+          next
+        end
+        debug "Logging units checksum for world addition. (`#{sha}`)"
         @log.push(sha)
         units.each do |unit|
           build_world(unit.dependencies, my_world, root)
         end
+        debug "Units added to world: #{MultiJson.dump(units.map{|u| {u.name => u.version} })}"
         my_world.add_unit(units)
       end
     end
@@ -108,6 +113,9 @@ module Grimoire
     # @raises [Error::UnitUnavailable]
     def unit_for(dep)
       unit = nil
+      if(queues[dep.name].nil?)
+        raise KeyError.new "No valid units for requested name found within system! (`#{dep.name}`)"
+      end
       until(unit || queues[dep.name].empty?)
         unit = queues[dep.name].pop
         unit = nil unless dep.requirement.satisfied_by?(unit.version)
@@ -158,7 +166,8 @@ module Grimoire
               end
             end
           end
-        rescue Error::ResolutionPathInvalid
+        rescue Error::ResolutionPathInvalid => e
+          debug "Resolution path deadend: #{e} (trying new path)"
           retry
         end
         deps.uniq
@@ -169,27 +178,34 @@ module Grimoire
     #
     # @return [Bogo::PriorityQueue<Path>]
     def generate!
+      if(requirements.requirements.empty?)
+        raise ArgumentError.new 'No cookbook constraints provided within Batali file!'
+      end
       custom_unit = Unit.new(
         :name => '~_SOLVER_UNIT_~',
         :version => '1.0.0',
         :dependencies => requirements.requirements
       )
       count = 0
+      debug "Solver Unit: #{MultiJson.dump(custom_unit)}"
+      debug{ "Solver world context of unit system: #{world.inspect}" }
       results = Bogo::PriorityQueue.new
       begin
         until(count > MAX_GENERATION_LOOPS)
           result = resolve(nil, custom_unit)
           results.push(Path.new(:units => result.slice(1, result.size)), count)
           count += 1
+          break # NOTE: right now we just want the best solution
         end
-      rescue Error::UnitUnavailable
+      rescue Error::UnitUnavailable => e
+        debug "Failed to unit: #{e}"
         count = nil
       end
       unless(count.nil?)
         raise Error::MaximumGenerationLoopsExceeded.new("Exceeded maximum allowed loops for path generation: #{MAX_GENERATION_LOOPS}")
       else
         if(results.empty?)
-          raise Error::NoSolution.new("Failed to generate valid path for requirements: `#{custom_unit.dependencies.inspect}`")
+          raise Error::NoSolution.new("Failed to generate valid path for requirements: `#{custom_unit.dependencies}`")
         else
           results
         end
