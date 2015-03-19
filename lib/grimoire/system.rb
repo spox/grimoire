@@ -86,5 +86,13 @@ module Grimoire
       )
     end
 
+    # @return [String]
+    def inspect
+      "<#{self.class}:#{self.object_id}>: " <<
+        units.to_a.sort_by(&:first).map do |name, units|
+        "#{name}: #{units.map(&:version).sort.map(&:to_s).join(', ')}"
+      end.join("\n")
+    end
+
   end
 end
