@@ -6,8 +6,9 @@ module Grimoire
     # Provide score for given unit
     #
     # @param unit [Unit]
+    # @param idx [Integer] current order index
     # @return [Numeric]
-    def score_for(unit)
+    def score_for(unit, idx)
       raise NotImplementedError.new 'No scoring has been defined'
     end
 

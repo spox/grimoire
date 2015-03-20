@@ -9,7 +9,7 @@ describe Grimoire::UnitScoreKeeper do
         Grimoire::Unit.new(
           :name => 'test',
           :version => '0.1.1'
-        )
+        ), 0
       )
     }.must_raise NotImplementedError
   end

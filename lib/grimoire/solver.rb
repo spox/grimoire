@@ -88,7 +88,7 @@ module Grimoire
     # @return [Numeric] score
     def score_unit(unit, score)
       if(score_keeper)
-        score_keeper.score_for(unit) || score
+        score_keeper.score_for(unit, score) || score
       else
         score
       end
