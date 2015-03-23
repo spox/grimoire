@@ -1,3 +1,11 @@
+# v0.2.0
+* Use direct `#to_json` to prevent conversion errors on older ruby
+* Add `UnitScoreKeeper#preferred_score` to provide some score meaning
+* Pass scoring preference through to queue init
+* Provide current index to score keeper when requesting score
+
+_ BREAKING CHANGES_: `UnitScoreKeeper#score_for` must now accept two parameters
+
 # v0.1.6
 * Add debug output if UI is available for output
 * Update exception errors to provide more detail/context
