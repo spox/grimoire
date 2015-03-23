@@ -54,12 +54,21 @@ module Grimoire
       end
     end
 
+    # @return [Bogo::PriorityQueue]
+    def create_queue
+      if(score_keeper)
+        Bogo::PriorityQueue.new(score_keeper.preferred_score)
+      else
+        Bogo::PriorityQueue.new
+      end
+    end
+
     # @return [Smash<{Unit#name:Bogo::PriorityQueue}>]
     def queues
       memoize(:queues) do
         Smash[
           world.units.map do |name, items|
-            queue = Bogo::PriorityQueue.new
+            queue = create_queue
             populate_queue(queue, items)
             [name, queue]
           end
@@ -100,7 +109,7 @@ module Grimoire
     # @return [self]
     def reset_queue(name)
       queue = populate_queue(
-        Bogo::PriorityQueue.new,
+        create_queue,
         world.units[name]
       )
       queues[name] = queue
