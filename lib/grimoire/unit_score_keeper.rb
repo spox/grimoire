@@ -3,6 +3,14 @@ require 'grimoire'
 module Grimoire
   class UnitScoreKeeper < Utility
 
+    # Define meaning of score by what should be preferred. This is
+    # used by the solver to apply correct sorting to the queues.
+    #
+    # @return [Symbol] :lowscore or :highscore
+    def preferred_score
+      :lowscore
+    end
+
     # Provide score for given unit
     #
     # @param unit [Unit]
