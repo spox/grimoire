@@ -17,6 +17,8 @@ module Grimoire
 
     # @return [System] subset of full system based on requirements
     attr_reader :world
+    # @return [System, NilClass] new system subset when pruning
+    attr_reader :new_world
 
     def initialize(*_)
       super
@@ -37,12 +39,15 @@ module Grimoire
     # @return [self]
     # @note This must be called explicitly and is provided for
     #   resolving an entire system, not a single resolution path
-    def prune_world
+    def prune_world!
       @new_world = System.new
       requirements.requirements.each do |req|
         world.units[req.name].each do |r_unit|
           path = Solver.new(
-            :requirements => [r_unit.name, r_unit.version],
+            :requirements => RequirementList.new(
+              :name => :world_pruner,
+              :requirements => [[r_unit.name, r_unit.version.version]]
+            ),
             :system => world,
             :score_keeper => score_keeper
           ).generate!.pop
@@ -124,7 +129,7 @@ module Grimoire
     # @return [Numeric] score
     def score_unit(unit, score)
       if(score_keeper)
-        score_keeper.score_for(unit, score) || score
+        score_keeper.score_for(unit, score, :solver => self) || score
       else
         score
       end
