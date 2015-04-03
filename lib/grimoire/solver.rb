@@ -21,10 +21,37 @@ module Grimoire
     def initialize(*_)
       super
       @world = System.new
+      @new_world = nil
       @log = []
       build_world(requirements.requirements, world, system)
       @log.clear
       world.scrub!
+    end
+
+    # After the world has been generated extraneous units will
+    # be included as a result of dependency constraints that may
+    # be too loose and are not actually required by any resolution
+    # that would be requested. This will run a second pass and remove
+    # extraneous items not required.
+    #
+    # @return [self]
+    # @note This must be called explicitly and is provided for
+    #   resolving an entire system, not a single resolution path
+    def prune_world
+      @new_world = System.new
+      requirements.requirements.each do |req|
+        world.units[req.name].each do |r_unit|
+          path = Solver.new(
+            :requirements => [r_unit.name, r_unit.version],
+            :system => world,
+            :score_keeper => score_keeper
+          ).generate!.pop
+          new_world.add_unit(*path.units)
+        end
+      end
+      @world = new_world
+      @new_world = nil
+      self
     end
 
     # Build the world required for the solver (the subset of the
