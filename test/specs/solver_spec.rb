@@ -124,6 +124,18 @@ describe Grimoire::Solver do
         unit.name == 'unit6' && unit.version.to_s == '8.0.0'
       end.wont_be_nil
     end
-  end
 
+    it 'should prune units not required for solutions' do
+      units.detect do |unit|
+        unit.name == 'unit1' && unit.version.to_s == '9.0.0'
+      end.dependencies = [
+        ['unit6', '> 5']
+      ]
+      solv = generate_solver
+      solv.world.units['unit6'].size.must_equal 4
+      solv.prune_world!
+      solv.world.units['unit6'].size.must_equal 1
+    end
+
+  end
 end
