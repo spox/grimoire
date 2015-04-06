@@ -1,3 +1,7 @@
+# v0.2.2
+* Provide origin solver to score keeper when requesting unit score
+* Introduce Solver#prune_world! to remove extraneous units
+
 # v0.2.0
 * Use direct `#to_json` to prevent conversion errors on older ruby
 * Add `UnitScoreKeeper#preferred_score` to provide some score meaning
