@@ -59,10 +59,12 @@ module Grimoire
         raise TypeError.new "Expecting `#{REQUIREMENT_CLASS}` but received `#{constraint.class}`"
       end
       unless(units[unit_name])
-        raise KeyError.new("Failed to locate any units loaded in system with requested name: `#{unit_name}`")
-      end
-      units[unit_name].find_all do |unit|
-        constraint.satisfied_by?(unit.version)
+        Grimoire.debug "Failed to locate any units loaded in system with requested name: `#{unit_name}`"
+        []
+      else
+        units[unit_name].find_all do |unit|
+          constraint.satisfied_by?(unit.version)
+        end
       end
     end
 
