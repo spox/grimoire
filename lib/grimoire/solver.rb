@@ -43,15 +43,20 @@ module Grimoire
       @new_world = System.new
       requirements.requirements.each do |req|
         world.units[req.name].each do |r_unit|
-          path = Solver.new(
-            :requirements => RequirementList.new(
+          begin
+            req_list = RequirementList.new(
               :name => :world_pruner,
               :requirements => [[r_unit.name, r_unit.version.version]]
-            ),
-            :system => world,
-            :score_keeper => score_keeper
-          ).generate!.pop
-          new_world.add_unit(*path.units)
+            )
+            path = Solver.new(
+              :requirements => req_list,
+              :system => world,
+              :score_keeper => score_keeper
+            ).generate!.pop
+            new_world.add_unit(*path.units)
+          rescue Error::NoSolution => e
+            debug "Failed to generate valid path for: #{r_unit.name}-#{r_unit.version}"
+          end
         end
       end
       @world = new_world
@@ -142,7 +147,7 @@ module Grimoire
     def reset_queue(name)
       queue = populate_queue(
         create_queue,
-        world.units[name]
+        world.units.fetch(name, [])
       )
       queues[name] = queue
       self
@@ -239,7 +244,7 @@ module Grimoire
           count += 1
         end
       rescue Error::UnitUnavailable => e
-        debug "Failed to unit: #{e}"
+        debug "Failed to locate unit: #{e}"
         count = nil
       end
       if(results.empty?)
