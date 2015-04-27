@@ -1,3 +1,7 @@
+# v0.2.4
+* No longer force error when no requested units are within system
+* Discard no solution errors when pruning the world instead of failing
+
 # v0.2.2
 * Provide origin solver to score keeper when requesting unit score
 * Introduce Solver#prune_world! to remove extraneous units
