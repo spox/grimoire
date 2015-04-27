@@ -137,5 +137,22 @@ describe Grimoire::Solver do
       solv.world.units['unit6'].size.must_equal 1
     end
 
+    it 'should discard items when pruning that provide no solution' do
+      units.detect do |unit|
+        unit.name == 'unit2' && unit.version.to_s == '8.0.0'
+      end.dependencies = [
+        ['unit6', '> 5']
+      ]
+      units.detect do |unit|
+        unit.name == 'unit1' && unit.version.to_s == '9.0.0'
+      end.dependencies = [
+        ['unit6', '> 20']
+      ]
+      solv = generate_solver
+      solv.world.units['unit6'].size.must_equal 4
+      solv.prune_world!
+      solv.world.units['unit6'].size.must_equal 1
+    end
+
   end
 end
