@@ -69,6 +69,13 @@ describe Grimoire::System do
     system.subset('a', Grimoire::REQUIREMENT_CLASS.new('>= 2')).must_equal [match_unit]
   end
 
+  it 'should return an empty subset when no units match constraint' do
+    system.add_unit(Grimoire::Unit.new(:name => 't', :version => '1'))
+    system.add_unit(Grimoire::Unit.new(:name => 'a', :version => '1'))
+    system.add_unit(match_unit = Grimoire::Unit.new(:name => 'a', :version => '2'))
+    system.subset('a', Grimoire::REQUIREMENT_CLASS.new('>= 3')).must_equal []
+  end
+
   it 'should remove duplicates after scrubbing' do
     t_unit = Grimoire::Unit.new(:name => 't', :version => '1')
     a_unit = Grimoire::Unit.new(:name => 'a', :version => '1')
