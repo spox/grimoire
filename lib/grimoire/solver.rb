@@ -10,6 +10,7 @@ module Grimoire
 
     include Bogo::Memoization
 
+    attribute :restrictions, RequirementList
     attribute :requirements, RequirementList, :required => true
     attribute :system, System, :required => true
     attribute :score_keeper, UnitScoreKeeper
@@ -25,9 +26,29 @@ module Grimoire
       @world = System.new
       @new_world = nil
       @log = []
+      if(restrictions)
+        apply_restrictions!
+      end
       build_world(requirements.requirements, world, system)
       @log.clear
       world.scrub!
+    end
+
+    # Restrictions are simply an implicit expansion of the requirements
+    # that. When restrictions are provided, it serves to further
+    # restrict the valid units available for solutions
+    #
+    # @return [self]
+    def apply_restrictions!
+      restrictions.each do |rst|
+        req = requirements.detect do |r|
+          r.name == rst.name
+        end
+        if(req)
+          req.merge(rst)
+        end
+      end
+      self
     end
 
     # After the world has been generated extraneous units will
