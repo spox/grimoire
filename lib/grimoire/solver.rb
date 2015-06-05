@@ -10,8 +10,12 @@ module Grimoire
 
     include Bogo::Memoization
 
-    attribute :restrictions, RequirementList
-    attribute :requirements, RequirementList, :required => true
+    attribute :restrictions, RequirementList, :coerce => lambda{|x|
+      RequirementList.new(:name => 'restrictions', :requirements => x) if x.is_a?(Array)
+    }
+    attribute :requirements, RequirementList, :required => true, :coerce => lambda{|x|
+      RequirementList.new(:name => 'requirements', :requirements => x) if x.is_a?(Array)
+    }
     attribute :system, System, :required => true
     attribute :score_keeper, UnitScoreKeeper
     attribute :result_limit, Integer, :required => true, :default => 1
