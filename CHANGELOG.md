@@ -1,3 +1,7 @@
+# v0.2.6
+* Add support for external constraint set within solver
+* Allow Solver#requirements to be coerced from Array
+
 # v0.2.4
 * No longer force error when no requested units are within system
 * Discard no solution errors when pruning the world instead of failing
