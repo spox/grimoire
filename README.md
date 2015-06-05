@@ -50,6 +50,23 @@ solver = Grimoire::Solver.new(
 )
 ```
 
+* Create a solver with restrictions (optional)
+
+```ruby
+solver = Grimoire::Solver.new(
+  :system => system,
+  :score_keeper => score_keeper,
+  :requirements => [
+    ['unit1', '> 2.0.0'],
+    ['unit2', '> 1', '< 3']
+  ],
+  :restrictions => [
+    ['unit1', '< 3'],
+    ['unit2', '> 1.2.0']
+  ]
+)
+```
+
 * Generate solutions
 
 ```ruby
