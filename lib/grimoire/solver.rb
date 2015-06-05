@@ -40,12 +40,16 @@ module Grimoire
     #
     # @return [self]
     def apply_restrictions!
-      restrictions.each do |rst|
-        req = requirements.detect do |r|
+      restrictions.requirements.each do |rst|
+        req = requirements.requirements.detect do |r|
           r.name == rst.name
         end
         if(req)
-          req.merge(rst)
+          new_req = req.merge(rst)
+          requirements.requirements.delete(req)
+          requirements.requirements.push(new_req)
+        else
+          requirements.requirements.push(rst)
         end
       end
       self
