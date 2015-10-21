@@ -1,3 +1,6 @@
+# v0.2.8
+* Provide helpful error when world contains no units to satisfy requirement
+
 # v0.2.6
 * Add support for external constraint set within solver
 * Allow Solver#requirements to be coerced from Array
