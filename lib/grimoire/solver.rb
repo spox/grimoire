@@ -71,6 +71,12 @@ module Grimoire
     def prune_world!
       @new_world = System.new
       requirements.requirements.each do |req|
+        unless(world.units[req.name])
+          debug "No units available matching requirement name `#{req.name}`! (#{req.inspect})"
+          exception = Error::UnitUnavailable.new "No units available for requirement `#{req.name}`"
+          exception.unit_name = req.name
+          raise exception
+        end
         world.units[req.name].each do |r_unit|
           begin
             req_list = RequirementList.new(
