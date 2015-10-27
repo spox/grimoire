@@ -1,3 +1,6 @@
+# v0.2.10
+* Remove units that do not satisfy requirements prior to world prune
+
 # v0.2.8
 * Provide helpful error when world contains no units to satisfy requirement
 
