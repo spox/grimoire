@@ -77,6 +77,14 @@ module Grimoire
           exception.unit_name = req.name
           raise exception
         end
+        world.units[req.name].delete_if do |r_unit|
+          unless(req.requirement.satisfied_by?(r_unit.version))
+            debug "Pruning unit due to root requirement satisfaction failure - #{req.name}: #{req.requirement} not satisfied by #{r_unit.name} @ #{r_unit.version}"
+            true
+          end
+        end
+      end
+      requirements.requirements.each do |req|
         world.units[req.name].each do |r_unit|
           begin
             req_list = RequirementList.new(
