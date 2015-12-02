@@ -143,6 +143,18 @@ describe Grimoire::Solver do
       end.dependencies = [
         ['unit6', '> 5']
       ]
+      solv = generate_solver
+      solv.world.units['unit6'].size.must_equal 4
+      solv.prune_world!
+      solv.world.units['unit6'].size.must_equal 1
+    end
+
+    it 'should error when no units available for defined world requirement' do
+      units.detect do |unit|
+        unit.name == 'unit2' && unit.version.to_s == '8.0.0'
+      end.dependencies = [
+        ['unit6', '> 5']
+      ]
       units.detect do |unit|
         unit.name == 'unit1' && unit.version.to_s == '9.0.0'
       end.dependencies = [
@@ -150,8 +162,7 @@ describe Grimoire::Solver do
       ]
       solv = generate_solver
       solv.world.units['unit6'].size.must_equal 4
-      solv.prune_world!
-      solv.world.units['unit6'].size.must_equal 1
+      ->{ solv.prune_world! }.must_raise Grimoire::Error::NoSolution
     end
 
     it 'should apply restrictions when solving requirements' do

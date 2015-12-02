@@ -102,6 +102,13 @@ module Grimoire
           end
         end
       end
+      missing_new_world = requirements.requirements.find_all do |req|
+        new_world.units[req.name].nil? || new_world.units[req.name].empty?
+      end
+      unless(missing_new_world.empty?)
+        missed_units = missing_new_world.map(&:name).sort
+        raise Error::NoSolution.new "Failed to satisfy core requirements (#{missed_units.join(', ')})"
+      end
       @world = new_world
       @new_world = nil
       self
