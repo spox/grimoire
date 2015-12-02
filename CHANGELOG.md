@@ -1,3 +1,6 @@
+# v0.2.12
+* Raise solution error on world prune if no units available for requirements
+
 # v0.2.10
 * Remove units that do not satisfy requirements prior to world prune
 
