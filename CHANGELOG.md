@@ -1,3 +1,6 @@
+# v0.2.14
+* Relax constraints on dependency libraries
+
 # v0.2.12
 * Raise solution error on world prune if no units available for requirements
 
