@@ -98,6 +98,43 @@ describe Grimoire::Solver do
       end.wont_be_nil
     end
 
+    it 'should not include multiple versions of single name' do
+      units.detect do |unit|
+        unit.name == 'unit1' && unit.version.to_s == '9.0.0'
+      end.dependencies = [
+        ['unit2', '< 5'],
+        ['unit6', '> 4', '< 9']
+      ]
+      units.detect do |unit|
+        unit.name == 'unit2' && unit.version.to_s == '4.0.0'
+      end.dependencies = [
+        ['unit6', '> 0']
+      ]
+      req = Grimoire::RequirementList.new(
+        :name => 'test',
+        :requirements => [
+          ['unit6', '> 0'],
+          ['unit1', '> 8'],
+          ['unit2', '> 1']
+        ]
+      )
+      result = Grimoire::Solver.new(:system => system, :requirements => req).generate!
+      result.wont_be :empty?
+      path = result.pop
+      path.units.detect do |unit|
+        unit.name == 'unit1' && unit.version.to_s == '9.0.0'
+      end.wont_be_nil
+      path.units.detect do |unit|
+        unit.name == 'unit2' && unit.version.to_s == '4.0.0'
+      end.wont_be_nil
+      path.units.detect do |unit|
+        unit.name == 'unit6' && unit.version.to_s == '8.0.0'
+      end.wont_be_nil
+      path.units.group_by(&:name).values.each do |items|
+        items.size.must_equal 1
+      end
+    end
+
     it 'should handle circular dependencies' do
       units.detect do |unit|
         unit.name == 'unit1' && unit.version.to_s == '9.0.0'
