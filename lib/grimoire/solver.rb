@@ -254,12 +254,21 @@ module Grimoire
             deps.compact!
             u_dep
           end.compact.map do |u_dep|  # validator
-            existing = deps.detect{|d| d.name == u_dep.name}
-            if(existing)
-              unless(u_dep.requirement.satisfied_by?(existing.version))
-                deps.delete(existing)
-                reset_queue(u_dep.name)
-                raise Error::ResolutionPathInvalid.new("Unit <#{existing.inspect}> does not satisfy <#{u_dep.inspect}>")
+            existing_collection = deps.find_all do |d|
+              d.name == u_dep.name
+            end
+            existing_requirements = deps.map do |d|
+              d.dependencies.find_all do |d_dep|
+                d_dep.name == u_dep.name
+              end
+            end.flatten.compact.map(&:requirement)
+            existing_collection.each do |existing|
+              ([u_dep.requirement] + existing_requirements).each do |req|
+                unless(req.satisfied_by?(existing.version))
+                  deps.delete(existing)
+                  reset_queue(u_dep.name)
+                  raise Error::ResolutionPathInvalid.new("Unit <#{existing.inspect}> does not satisfy <#{req.inspect}>")
+                end
               end
             end
           end

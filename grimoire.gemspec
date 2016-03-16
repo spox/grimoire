@@ -14,5 +14,6 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency 'attribute_struct', '>= 0.1.12', '< 0.5'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'pry'
+  s.add_development_dependency 'rake', '~> 10'
   s.files = Dir['{lib}/**/**/*'] + %w(grimoire.gemspec README.md CHANGELOG.md CONTRIBUTING.md LICENSE)
 end
