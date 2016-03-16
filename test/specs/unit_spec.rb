@@ -1,5 +1,4 @@
-require 'grimoire'
-require 'minitest/autorun'
+require_relative '../helper'
 
 describe Grimoire::Unit do
 
