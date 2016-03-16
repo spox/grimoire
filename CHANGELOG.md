@@ -1,3 +1,6 @@
+# v0.2.16
+* Fix constraint validator to check full unit collection
+
 # v0.2.14
 * Relax constraints on dependency libraries
 
