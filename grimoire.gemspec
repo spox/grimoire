@@ -11,7 +11,6 @@ Gem::Specification.new do |s|
   s.require_path = 'lib'
   s.license = 'Apache 2.0'
   s.add_runtime_dependency 'bogo', '>= 0.1.10', '< 1.0'
-  s.add_runtime_dependency 'attribute_struct', '>= 0.1.12', '< 0.5'
   s.add_development_dependency 'minitest'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake', '~> 10'
